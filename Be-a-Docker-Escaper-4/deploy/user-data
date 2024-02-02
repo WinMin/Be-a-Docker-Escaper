@@ -1,0 +1,59 @@
+#cloud-config
+apt:
+  primary:
+    - arches: [default]
+      uri: http://mirrors.aliyun.com/ubuntu/
+      search:
+        - http://mirrors.aliyun.com/ubuntu/
+
+packages:
+  - docker.io
+  - openssh-server
+
+groups:
+  - docker
+
+users:
+  - name: container
+    groups: docker
+    shell: /home/container/run.sh
+  - name: user
+    shell: /bin/bash
+
+ssh_pwauth: true
+chpasswd:
+    expire: false
+    users:
+      - name: container
+        password: rwctf@passwd
+        type: text
+      - name: user
+        password: rwctf{Do you know? cloud-init may leak sensitive information}
+        type: text
+
+write_files:
+  - content: |
+      #!/bin/bash
+      sleep 10000 &
+      docker run --rm -it --pid=host --security-opt="apparmor=unconfined" ubuntu bash
+    path: /home/container/run.sh
+    permissions: "0755"
+  - content: |
+      rwctf{Escaping-a-dokcer-throught-shared-PID-aa8dfbd4-f3bd-4c10}
+    permissions: "0000"
+    path: /flag1
+  - content: |
+      {
+        "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"]
+      }
+    path: /etc/docker/daemon.json
+
+runcmd:
+  - docker pull ubuntu
+
+power_state:
+  delay: "now"
+  mode: poweroff
+  message: Bye Bye
+  timeout: 30
+  condition: True
