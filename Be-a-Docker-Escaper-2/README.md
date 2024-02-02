@@ -23,13 +23,13 @@ name:type:offset:magic:mask:interpreter:flags
 这个配置中每个字段都用冒号 : 分割，某些字段拥有默认值可以跳过，但是必须保留相应的冒号分割符。
 各个字段的意义如下：
 
-● name：规则名
-● type：表示如何匹配被打开的文件，值为 E 或 M 。E 表示根据扩展名识别，而 M 表示根据文件特定位置的Magic Bytes来识别
-● offset：type字段设置成 M 之后有效，表示查找Magic Bytes的偏移，默认为0
-● magic：表示要匹配的Magic Bytes，type字段为 M 时，表示文件的扩展名，扩展名是大小写敏感的，不需要包含 .。type字段为 E 时，表示Magic Bytes，其中不可见字符可以通过 \xff 的方式来输出
-● mask：type字段设置成 M 之后有效，长度与Magic Bytes的长度一致。如果某一位为1，表magic对应的位匹配，为0则忽略。默认为全部匹配
-● interpreter：启动文件的程序，需要是绝对路径
-● flags: 可选字段，控制interpreter打开文件的行为。共支持 POCF 四种flag。
+* name：规则名
+* type：表示如何匹配被打开的文件，值为 E 或 M 。E 表示根据扩展名识别，而 M 表示根据文件特定位置的Magic Bytes来识别
+* offset：type字段设置成 M 之后有效，表示查找Magic Bytes的偏移，默认为0
+* magic：表示要匹配的Magic Bytes，type字段为 M 时，表示文件的扩展名，扩展名是大小写敏感的，不需要包含 .。type字段为 E 时，表示Magic Bytes，其中不可见字符可以通过 \xff 的方式来输出
+* mask：type字段设置成 M 之后有效，长度与Magic Bytes的长度一致。如果某一位为1，表magic对应的位匹配，为0则忽略。默认为全部匹配
+* interpreter：启动文件的程序，需要是绝对路径
+* flags: 可选字段，控制interpreter打开文件的行为。共支持 POCF 四种flag。
 
 因此我们可以注册一个自己的 binfmt， 然后让其 HOST 执行相应的文件，就可以完成逃逸。关键是如何在 HOST 执行相应的文件。观察出题人给的条件,  出题人给了 ssh 登陆的途径。
 我们通过 strace sshd 进程  ， 我们会发现 sshd 服务当有 ssh 尝试连接的时候会执行一些 bash 脚本，例如`etc/update-motd.d/00-header`
