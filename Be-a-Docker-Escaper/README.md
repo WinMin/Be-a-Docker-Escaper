@@ -37,5 +37,5 @@ cat /tmp/a/root/flag
 
 [1]: https://github.com/zh-explorer
 [2]: ./deploy	"题目部署脚本"
-[]: 
+
 
