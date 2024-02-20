@@ -1,0 +1,70 @@
+#cloud-config
+apt:
+  primary:
+    - arches:
+      - amd64
+      - default
+      uri: 'http://mirrors.aliyun.com/ubuntu/'
+      search:
+        - 'http://mirrors.aliyun.com/ubuntu/'
+
+  security:
+    - arches:
+      - amd64
+      - default
+      uri: 'http://mirrors.aliyun.com/ubuntu/'
+      search:
+        - 'http://mirrors.aliyun.com/ubuntu/'
+
+timezone: Asia/Shanghai
+
+packages:
+  - docker.io
+  - openssh-server
+
+groups:
+  - docker
+
+users:
+  - name: container
+    groups: docker
+    shell: /home/container/run.sh
+
+write_files:
+  - content: |
+      #!/bin/bash
+      docker run -i --rm -m 128m escape # You are here!
+    path: /home/container/run.sh
+    permissions: "0755"
+  - content: |
+      rwctf{0ld_schO0l_d1rtycow_vdsO_3xpl01t}
+    permissions: "0000"
+    path: /root/flag
+  - content: |
+      {
+        "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"]
+      }
+    path: /etc/docker/daemon.json
+  - content: |
+      FROM ubuntu:20.04
+      RUN sed -i "s/http:\/\/archive.ubuntu.com/http:\/\/mirrors.aliyun.com/g" /etc/apt/sources.list && \
+         sed -i "s/http:\/\/security.ubuntu.com/http:\/\/mirrors.aliyun.com/g" /etc/apt/sources.list
+
+      RUN apt-get update && \
+        apt-get -y dist-upgrade
+
+      RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install tzdata
+
+      RUN apt-get install -y build-essential git cmake gcc python3 python3-pip
+      CMD ["bash"]
+    path: /home/container/escape/Dockerfile
+
+runcmd:
+  - docker build -t escape /home/container/escape
+  
+power_state:
+  delay: "now"
+  mode: poweroff
+  message: Bye Bye
+  timeout: 30
+  condition: True
