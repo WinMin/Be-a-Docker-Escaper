@@ -1,0 +1,45 @@
+#cloud-config
+apt: 
+  primary:
+    - arches: [default]
+      uri: http://mirrors.aliyun.com/ubuntu/
+      search: 
+        - http://mirrors.aliyun.com/ubuntu/
+
+packages:
+  - docker.io
+  - openssh-server
+
+groups:
+  - docker
+
+users:
+  - name: container
+    groups: docker
+    shell: /home/container/run.sh
+
+write_files:
+  - content: | 
+      #!/bin/bash
+      docker run -i -m 128m -v /var/run/docker.sock:/s ubuntu # You are here!
+    path: /home/container/run.sh
+    permissions: "0755"
+  - content: |
+      rwctf{THIS_IS_A_TEST_FLAG}
+    permissions: "0000"
+    path: /root/flag
+  - content: |
+      {
+        "registry-mirrors": ["https://docker.mirrors.ustc.edu.cn"]
+      }
+    path: /etc/docker/daemon.json
+  
+runcmd:
+  - docker pull ubuntu
+
+power_state:
+  delay: "now"
+  mode: poweroff
+  message: Bye Bye
+  timeout: 30
+  condition: True
