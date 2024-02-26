@@ -25,7 +25,8 @@ Escape, Escape, Escape, Escape !
 #!/bin/sh
 
 pid=$(pidof sleep)
-useradd -u 1000 user
+groupadd -g 1001 user
+useradd -m -g 1001 -u 1000 user
 
 su user -c "cat /proc/$pid/root/flag1"
 
