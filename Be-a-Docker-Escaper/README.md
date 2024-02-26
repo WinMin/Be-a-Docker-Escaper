@@ -31,7 +31,7 @@ cat /tmp/a/root/flag
 
 ## Deploy
 
-题目部署脚本相关可以参考 [deploy][1] 文件夹
+题目部署脚本相关可以参考 [deploy][2] 文件夹
 
 ## Reference Link
 
